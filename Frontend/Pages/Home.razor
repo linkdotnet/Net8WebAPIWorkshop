@@ -5,7 +5,7 @@
 
 <PageTitle>Expense</PageTitle>
 
-<MudText Typo="Typo.h1" Class="mb-5">Expense Overview</MudText>
+<MudText Typo="Typo.h2" Class="mb-5">Expense Overview</MudText>
 
 <MudTable T="Expense" Loading="@(_expenses is null)" Items="_expenses" Hover="true" CanCancelEdit="true" OnCommitEditClick="RowEditCommit"
           @bind-SelectedItem="_selectedExpense">
@@ -42,10 +42,10 @@
             <MudNumericField @bind-Value="@context.Value" Min="0" Label="Value"></MudNumericField>
         </MudTd>
         <MudTd>
-            <MudTextField @bind-Value="@context.ExpenseDate" Label="Date"></MudTextField>
+            <MudTextField @bind-Value="@context.ExpenseDate" Label="Date" InputType="InputType.Date" Converter="DateConverter"></MudTextField>
         </MudTd>
         <MudTd>
-            <MudTextField @bind-Value="@context.Categories" Label="Categories" Converter="_converter"></MudTextField>
+            <MudTextField @bind-Value="@context.Categories" Label="Categories" Converter="CategoryConverter"></MudTextField>
         </MudTd>
         <MudTd>
         </MudTd>
@@ -111,10 +111,16 @@
         }
     }
     
-    private readonly Converter<string[]> _converter = new()
+    private static readonly Converter<string[]> CategoryConverter = new()
     {
         SetFunc = value => string.Join(',', value ?? []),
         GetFunc = text => text?.Split(',') ?? [],
+    };
+    
+    private static readonly Converter<DateOnly> DateConverter = new()
+    {
+        SetFunc = value => value.ToString(),
+        GetFunc = text => DateOnly.Parse(text ?? ""),
     };
 
     private async Task RowEditCommit()
