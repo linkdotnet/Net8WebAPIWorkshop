@@ -10,7 +10,7 @@ public static class ExpenseExtensions
     public static void RegisterExpenseEndpoints(this IEndpointRouteBuilder endpoint)
     {
         var group = endpoint.MapGroup("/api/expenses");
-        
+
         group.MapGet("/", async (AppDbContext dbContext, int? page, int? pageSize) =>
             {
                 page ??= 0;
@@ -23,23 +23,8 @@ public static class ExpenseExtensions
                     .AsNoTracking()
                     .ToListAsync();
             })
-            .WithDescription("Retrieves all expenses.");
-        
-        group.MapGet("/{category}", async (string category, AppDbContext dbContext) =>
-        {
-            return await dbContext.Expenses
-                .AsNoTracking()
-                .Where(e => e.Categories.Contains(category))
-                .ToListAsync();
-        });
-
-        group.MapGet("/{year}/{month}", async (int year, int month, AppDbContext dbContext) =>
-        {
-            return await dbContext.Expenses
-                .AsNoTracking()
-                .Where(e => e.ExpenseDate.Year == year && e.ExpenseDate.Month == month)
-                .ToListAsync();
-        });
+            .WithDescription("Retrieves a list of expenses")
+            .WithSummary("Get all expenses");
         
         group.MapPost("/", async (AppDbContext dbContext, CreateExpenseDto createExpenseDto, IHubContext<ExpenseHub> hub) =>
         {
@@ -53,22 +38,10 @@ public static class ExpenseExtensions
             await dbContext.SaveChangesAsync();
             await NotifyUpdate(hub);
             await NotifyWhenExpenseLimitReached(dbContext, createExpenseDto.ExpenseDate, hub);
-        });
-
-        group.MapGet("/get-total-expense", async (AppDbContext dbContext) =>
-        {
-            return await dbContext.Expenses
-                .SumAsync(e => e.Value);
-        });
-
-        group.MapGet("get-total-expense/{year}/{month}", async (int year, int month, AppDbContext dbContext) =>
-        {
-            return await dbContext.Expenses
-                .Where(e => e.ExpenseDate.Year == year && e.ExpenseDate.Month == month)
-                .SumAsync(e => e.Value);
-        });
+        })
+        .WithDescription("Creates a new expense");
         
-        group.MapDelete("/{id}", async (int id, AppDbContext dbContext, IHubContext<ExpenseHub> hub) =>
+        group.MapDelete("/{id:int}", async (int id, AppDbContext dbContext, IHubContext<ExpenseHub> hub) =>
         {
             var expense = await dbContext.Expenses.FindAsync(id)
                 ?? throw new InvalidOperationException($"Can't find expense with id {id}");
@@ -76,15 +49,16 @@ public static class ExpenseExtensions
             await dbContext.SaveChangesAsync();
             
             await NotifyUpdate(hub);
-        });
+        })
+        .WithDescription("Deletes an expense");
 
-        group.MapPut("/{id}", async (int id, UpdateExpenseDto dto, AppDbContext dbContext, IHubContext<ExpenseHub> hub) =>
+        group.MapPut("/{id:int}", async (int id, UpdateExpenseDto dto, AppDbContext dbContext, IHubContext<ExpenseHub> hub) =>
         {
             var update = new Expense(
                 dto.Name,
                 dto.Value,
                 dto.Categories,
-                dto.Date);
+                dto.ExpenseDate);
             
             var expense = await dbContext.Expenses.FindAsync(id) 
                           ?? throw new InvalidOperationException($"Can't find expense with id {dto.Id}");
@@ -92,8 +66,9 @@ public static class ExpenseExtensions
             expense.Update(update);
             await dbContext.SaveChangesAsync();
             await NotifyUpdate(hub);
-            await NotifyWhenExpenseLimitReached(dbContext, dto.Date, hub);
-        });
+            await NotifyWhenExpenseLimitReached(dbContext, dto.ExpenseDate, hub);
+        })
+        .WithDescription("Updates an expense");
 
         group.WithOpenApi();
     }
@@ -124,5 +99,5 @@ public static class ExpenseExtensions
 
     private record CreateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
 
-    private record UpdateExpenseDto(int Id, string Name, decimal Value, string[] Categories, DateOnly Date);
+    private record UpdateExpenseDto(int Id, string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
 }
