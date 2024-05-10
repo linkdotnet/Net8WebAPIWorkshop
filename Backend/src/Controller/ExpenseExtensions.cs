@@ -37,7 +37,6 @@ public static class ExpenseExtensions
             await dbContext.Expenses.AddAsync(expense);
             await dbContext.SaveChangesAsync();
             await NotifyUpdate(hub);
-            await NotifyWhenExpenseLimitReached(dbContext, createExpenseDto.ExpenseDate, hub);
         })
         .WithDescription("Creates a new expense");
         
@@ -66,7 +65,6 @@ public static class ExpenseExtensions
             expense.Update(update);
             await dbContext.SaveChangesAsync();
             await NotifyUpdate(hub);
-            await NotifyWhenExpenseLimitReached(dbContext, dto.ExpenseDate, hub);
         })
         .WithDescription("Updates an expense");
 
@@ -76,25 +74,6 @@ public static class ExpenseExtensions
     private static async Task NotifyUpdate(IHubContext<ExpenseHub> hub)
     {
         await hub.Clients.All.SendAsync("update");
-    }
-
-    private static async Task NotifyWhenExpenseLimitReached(
-        AppDbContext dbContext,
-        DateOnly expenseDate,
-        IHubContext<ExpenseHub> hub)
-    {
-        // Get total expenses for the month and notify the user if it exceeds the budget
-        var allValues = await dbContext.Expenses
-            .Where(e => e.ExpenseDate.Year == expenseDate.Year && e.ExpenseDate.Month == expenseDate.Month)
-            .Select(e => e.Value)
-            .ToListAsync();
-            
-        var totalExpense = allValues.Sum();
-
-        if (totalExpense > 5000)
-        {
-            await hub.Clients.All.SendAsync("Notification", $"Budget exceeded for {expenseDate:MMMM yyyy}");
-        }
     }
 
     private record CreateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
