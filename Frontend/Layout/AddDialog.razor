@@ -1,0 +1,28 @@
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            <MudTextField @bind-Value="@_expenseToAdd.Name" Label="Expense Name"></MudTextField>
+            <MudNumericField @bind-Value="@_expenseToAdd.Value" Min="0" Label="Value"></MudNumericField>
+            <MudTextField @bind-Value="@_categoryToAdd" Label="Categories"></MudTextField>
+            <MudTextField T="DateOnly" @bind-Value="@_expenseToAdd.ExpenseDate" Label="Date"></MudTextField>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private readonly Expense _expenseToAdd = new();
+    private string _categoryToAdd = string.Empty;
+
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
+
+    private void Cancel() => MudDialog.Cancel();
+    private void Submit()
+    {
+        _expenseToAdd.Categories = _categoryToAdd.Split(',');
+        MudDialog.Close(DialogResult.Ok(_expenseToAdd));
+    }
+}
