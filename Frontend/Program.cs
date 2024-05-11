@@ -12,5 +12,11 @@ builder.Services.AddRefitClient<IExpenseApi>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7011/"));
 builder.Services.AddMudServices();
 
+builder.Services.AddOidcAuthentication(options =>
+{
+    builder.Configuration.Bind("Auth0", options.ProviderOptions);
+    options.ProviderOptions.ResponseType = "code";
+});
+
 await builder.Build()
     .RunAsync();

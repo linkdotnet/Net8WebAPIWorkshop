@@ -22,7 +22,7 @@
     private void Cancel() => MudDialog.Cancel();
     private void Submit()
     {
-        _expenseToAdd.Categories = _categoryToAdd.Split(',');
+        _expenseToAdd.Categories = _categoryToAdd.Split(',', StringSplitOptions.RemoveEmptyEntries);
         MudDialog.Close(DialogResult.Ok(_expenseToAdd));
     }
 }
