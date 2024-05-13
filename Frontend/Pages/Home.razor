@@ -92,7 +92,12 @@
     private async Task AddEntry()
     {
         var entry = await DialogService.ShowAsync<AddDialog>("Add Expense");
-        var expenseDto = (Expense)(await entry.Result).Data;
+        var result = await entry.Result;
+        if (result.Canceled)
+        {
+            return;
+        }
+        var expenseDto = (Expense)result.Data;
         await ExpenseApi.Create(expenseDto);
         _expenses = await ExpenseApi.GetAll(1, 100);
     }
