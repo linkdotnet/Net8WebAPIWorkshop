@@ -18,7 +18,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Value">@context.Value</MudTd>
+        <MudTd DataLabel="Value">@context.Value <MudIcon Icon="@Icons.TwoTone.CurrencyFranc" Size="Size.Small"/></MudTd>
         <MudTd DataLabel="Date">@context.ExpenseDate</MudTd>
         <MudTd>
             <MudChipSet>
@@ -39,7 +39,7 @@
             <MudTextField @bind-Value="@context.Name" Label="Name"></MudTextField>
         </MudTd>
         <MudTd>
-            <MudNumericField @bind-Value="@context.Value" Min="0" Label="Value"></MudNumericField>
+            <MudNumericField @bind-Value="@context.Value" Min="0" Label="Value" AdornmentIcon="@Icons.TwoTone.CurrencyFranc" Adornment="Adornment.End"></MudNumericField>
         </MudTd>
         <MudTd>
             <MudTextField @bind-Value="@context.ExpenseDate" Label="Date" InputType="InputType.Date" Converter="DateConverter"></MudTextField>

@@ -4,7 +4,7 @@
             <MudTextField @bind-Value="@_expenseToAdd.Name" Label="Expense Name"></MudTextField>
             <MudNumericField @bind-Value="@_expenseToAdd.Value" Min="0" Label="Value"></MudNumericField>
             <MudTextField @bind-Value="@_categoryToAdd" Label="Categories"></MudTextField>
-            <MudTextField T="DateOnly" @bind-Value="@_expenseToAdd.ExpenseDate" Label="Date"></MudTextField>
+            <MudTextField T="DateOnly" @bind-Value="@_expenseToAdd.ExpenseDate" Label="Date" Converter="DateConverter"></MudTextField>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -25,4 +25,10 @@
         _expenseToAdd.Categories = _categoryToAdd.Split(',');
         MudDialog.Close(DialogResult.Ok(_expenseToAdd));
     }
+    
+    private static readonly Converter<DateOnly> DateConverter = new()
+    {
+        SetFunc = value => value.ToString(),
+        GetFunc = text => DateOnly.Parse(text ?? ""),
+    };
 }
