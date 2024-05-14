@@ -6,6 +6,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{0E01
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "Frontend\WebApp.csproj", "{B9B44C88-CBC6-4047-99D7-A8E68A9B1D95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTracker", "Backend\src\ExpenseTracker\ExpenseTracker.csproj", "{78AA159C-7332-4033-B56D-7F1967BC4D81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,11 +15,16 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B9B44C88-CBC6-4047-99D7-A8E68A9B1D95} = {7FCAE9F8-11BE-4A13-8764-45E9637C3914}
+		{78AA159C-7332-4033-B56D-7F1967BC4D81} = {0E01DF84-A6FB-485E-8B43-6AF5D5D90947}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B9B44C88-CBC6-4047-99D7-A8E68A9B1D95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9B44C88-CBC6-4047-99D7-A8E68A9B1D95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9B44C88-CBC6-4047-99D7-A8E68A9B1D95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9B44C88-CBC6-4047-99D7-A8E68A9B1D95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78AA159C-7332-4033-B56D-7F1967BC4D81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78AA159C-7332-4033-B56D-7F1967BC4D81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78AA159C-7332-4033-B56D-7F1967BC4D81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78AA159C-7332-4033-B56D-7F1967BC4D81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
