@@ -44,6 +44,8 @@ builder.Services.AddDbContext<AppDbContext>(optionsBuilder =>
     optionsBuilder.UseSqlite("Data Source=app.db");
 });
 
+builder.Services.AddExceptionHandler<ExceptionHandler>();
+
 builder.Services.AddCors(o =>
 {
     o.AddPolicy("OnlyUs", b =>
@@ -70,6 +72,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseExceptionHandler(_ => { });
 
 // Add our middleware
 /*
