@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ExpenseTracker.Domain;
 using ExpenseTracker.Infrastructure;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ExpenseTracker.Controller;
 
@@ -25,7 +26,7 @@ public static class ExpenseExtensions
             .WithDescription("Retrieves a list of expenses")
             .WithSummary("Get all expenses");
         
-        group.MapPost("/", async (AppDbContext dbContext, CreateExpenseDto createExpenseDto) =>
+        group.MapPost("/", async (AppDbContext dbContext, CreateExpenseDto createExpenseDto, IHubContext<ExpenseHub> hub) =>
         {
             var expense = new Expense(
                 createExpenseDto.Name,
@@ -35,19 +36,22 @@ public static class ExpenseExtensions
             
             await dbContext.Expenses.AddAsync(expense);
             await dbContext.SaveChangesAsync();
+            await NotifyUpdate(hub);
         })
         .WithDescription("Creates a new expense");
         
-        group.MapDelete("/{id:int}", async (int id, AppDbContext dbContext) =>
+        group.MapDelete("/{id:int}", async (int id, AppDbContext dbContext, IHubContext<ExpenseHub> hub) =>
         {
             var expense = await dbContext.Expenses.FindAsync(id)
                 ?? throw new InvalidOperationException($"Can't find expense with id {id}");
             dbContext.Expenses.Remove(expense);
             await dbContext.SaveChangesAsync();
+            
+            await NotifyUpdate(hub);
         })
         .WithDescription("Deletes an expense");
 
-        group.MapPut("/{id:int}", async (int id, UpdateExpenseDto dto, AppDbContext dbContext) =>
+        group.MapPut("/{id:int}", async (int id, UpdateExpenseDto dto, AppDbContext dbContext, IHubContext<ExpenseHub> hub) =>
         {
             var update = new Expense(
                 dto.Name,
@@ -60,11 +64,18 @@ public static class ExpenseExtensions
             
             expense.Update(update);
             await dbContext.SaveChangesAsync();
+            await NotifyUpdate(hub);
         })
         .WithDescription("Updates an expense");
 
         group.WithOpenApi();
     }
+
+    private static async Task NotifyUpdate(IHubContext<ExpenseHub> hub)
+    {
+        await hub.Clients.All.SendAsync("update");
+    }
+
     private record CreateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
 
     private record UpdateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);

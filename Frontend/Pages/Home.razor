@@ -80,7 +80,7 @@
         }); 
         
         _expenses = await ExpenseApi.GetAll(1, 100);
-        // await _hubConnection.StartAsync();
+        await _hubConnection.StartAsync();
     }
 
     private async Task RefreshData()

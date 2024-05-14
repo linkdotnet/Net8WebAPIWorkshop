@@ -1,5 +1,5 @@
+using ExpenseTracker;
 using ExpenseTracker.Controller;
-using ExpenseTracker.Domain;
 using ExpenseTracker.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +36,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSignalR();
 builder.Services.AddDbContext<AppDbContext>(optionsBuilder =>
 {
     optionsBuilder.UseSqlite("Data Source=app.db");
@@ -65,5 +66,7 @@ app.UseHttpsRedirection();
 app.UseCors("OnlyUs");
 
 app.RegisterExpenseEndpoints();
+
+app.MapHub<ExpenseHub>("expensehub");
 
 app.Run();
