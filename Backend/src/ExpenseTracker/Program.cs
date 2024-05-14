@@ -1,3 +1,4 @@
+using ExpenseTracker.Domain;
 using ExpenseTracker.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,4 +78,19 @@ app.MapGet("/", async (AppDbContext dbContext, int? page, int? pageSize) =>
     .WithDescription("Retrieves a list of expenses")
     .WithSummary("Get all expenses");
 
+app.MapPost("/", async (AppDbContext dbContext, CreateExpenseDto createExpenseDto) =>
+    {
+        var expense = new Expense(
+            createExpenseDto.Name,
+            createExpenseDto.Value,
+            createExpenseDto.Categories,
+            createExpenseDto.ExpenseDate);
+            
+        await dbContext.Expenses.AddAsync(expense);
+        await dbContext.SaveChangesAsync();
+    })
+    .WithDescription("Creates a new expense");
+
 app.Run();
+
+record CreateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
