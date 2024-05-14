@@ -106,6 +106,16 @@ app.MapPut("/{id:int}", async (int id, UpdateExpenseDto dto, AppDbContext dbCont
         await dbContext.SaveChangesAsync();
     })
     .WithDescription("Updates an expense");
+
+app.MapDelete("/{id:int}", async (int id, AppDbContext dbContext) =>
+    {
+        var expense = await dbContext.Expenses.FindAsync(id)
+                      ?? throw new InvalidOperationException($"Can't find expense with id {id}");
+        dbContext.Expenses.Remove(expense);
+        await dbContext.SaveChangesAsync();
+    })
+    .WithDescription("Deletes an expense");
+
 app.Run();
 
 record CreateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
