@@ -1,8 +1,8 @@
 using ExpenseTracker;
-using Microsoft.EntityFrameworkCore;
 using ExpenseTracker.Controller;
 using ExpenseTracker.Infrastructure;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 /*
@@ -71,9 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.RegisterExpenseEndpoints();
-
-app.UseCors("OnlyUs");
+app.UseHttpsRedirection();
 
 app.UseExceptionHandler(_ => { });
 
@@ -100,7 +98,9 @@ app.Use(async (context, next) =>
     logger.LogDebug("After Request with Uri '{Uri}'", context.Request.GetDisplayUrl());
 });
 
-app.UseHttpsRedirection();
+app.UseCors("OnlyUs");
+
+app.RegisterExpenseEndpoints();
 
 app.MapHub<ExpenseHub>("expensehub");
 
