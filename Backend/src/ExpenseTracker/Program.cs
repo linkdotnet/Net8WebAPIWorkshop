@@ -91,6 +91,22 @@ app.MapPost("/", async (AppDbContext dbContext, CreateExpenseDto createExpenseDt
     })
     .WithDescription("Creates a new expense");
 
+app.MapPut("/{id:int}", async (int id, UpdateExpenseDto dto, AppDbContext dbContext) =>
+    {
+        var update = new Expense(
+            dto.Name,
+            dto.Value,
+            dto.Categories,
+            dto.ExpenseDate);
+
+        var expense = await dbContext.Expenses.FindAsync(id)
+                      ?? throw new InvalidOperationException($"Can't find expense with id {id}");
+
+        expense.Update(update);
+        await dbContext.SaveChangesAsync();
+    })
+    .WithDescription("Updates an expense");
 app.Run();
 
 record CreateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
+record UpdateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
