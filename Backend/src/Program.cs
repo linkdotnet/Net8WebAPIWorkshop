@@ -105,3 +105,5 @@ app.UseHttpsRedirection();
 app.MapHub<ExpenseHub>("expensehub");
 
 app.Run();
+
+public partial class Program;
