@@ -1,4 +1,5 @@
-using ExpenseTracker.Domain;
+using ExpenseTracker.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 /*
  * +-------+         +---------+          +-------------+          +-------+
@@ -33,6 +34,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<AppDbContext>(optionsBuilder =>
+{
+    optionsBuilder.UseSqlite("Data Source=app.db");
+});
+
 builder.Services.AddCors(o =>
 {
     o.AddPolicy("OnlyUs", b =>
@@ -56,10 +62,17 @@ app.UseHttpsRedirection();
 
 app.UseCors("OnlyUs");
 
-app.MapGet("/api/expenses", () =>
+app.MapGet("/", async (AppDbContext dbContext, int? page, int? pageSize) =>
     {
-        var expense = new Expense("Expense 1", 100m, [""], new DateOnly(2024, 5, 14));
-        return new[] { expense };
+        page ??= 0;
+        pageSize ??= int.MaxValue;
+        return await dbContext
+            .Expenses
+            .OrderBy(b => b.Id)
+            .Skip(page.Value)
+            .Take(pageSize.Value)
+            .AsNoTracking()
+            .ToListAsync();
     })
     .WithDescription("Retrieves a list of expenses")
     .WithSummary("Get all expenses");
