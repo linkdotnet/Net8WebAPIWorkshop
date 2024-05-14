@@ -60,7 +60,7 @@ public static class ExpenseExtensions
                 dto.ExpenseDate);
             
             var expense = await dbContext.Expenses.FindAsync(id) 
-                          ?? throw new InvalidOperationException($"Can't find expense with id {dto.Id}");
+                          ?? throw new InvalidOperationException($"Can't find expense with id {id}");
             
             expense.Update(update);
             await dbContext.SaveChangesAsync();
@@ -78,5 +78,5 @@ public static class ExpenseExtensions
 
     private record CreateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
 
-    private record UpdateExpenseDto(int Id, string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
+    private record UpdateExpenseDto(string Name, decimal Value, string[] Categories, DateOnly ExpenseDate);
 }
