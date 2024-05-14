@@ -1,7 +1,9 @@
 using ExpenseTracker;
 using ExpenseTracker.Controller;
 using ExpenseTracker.Infrastructure;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 /*
  * +-------+         +---------+          +-------------+          +-------+
@@ -52,6 +54,12 @@ builder.Services.AddCors(o =>
     });
 });
 
+// Logging
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+builder.Services.AddSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,6 +70,29 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Add our middleware
+/*
+ * Browser           Middleware           Controller/Action
+   |                 |                  |
+   |---Request------>|                  |
+   |                 |---Request------->|
+   |                 |<--Response-------|
+   |                 X                  X
+   |<--Response------|                  |
+   |                 |                  |
+   |---Request------>|                  |
+   |                 |---Request------->|
+   |                 |<--Exception------|
+   |<--Error Object--|                  |
+ */
+app.Use(async (context, next) =>
+{
+    var logger = app.Logger;
+    logger.LogDebug("Before Request with Uri '{Uri}'", context.Request.GetDisplayUrl());
+    await next(context);
+    logger.LogDebug("After Request with Uri '{Uri}'", context.Request.GetDisplayUrl());
+});
 
 app.UseCors("OnlyUs");
 
