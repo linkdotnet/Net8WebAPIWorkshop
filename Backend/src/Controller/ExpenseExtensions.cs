@@ -13,12 +13,12 @@ public static class ExpenseExtensions
 
         group.MapGet("/", async (AppDbContext dbContext, int? page, int? pageSize) =>
             {
-                page ??= 0;
+                page ??= 1;
                 pageSize ??= int.MaxValue;
                 return await dbContext
                     .Expenses
                     .OrderBy(b => b.Id)
-                    .Skip(page.Value)
+                    .Skip((page.Value - 1) * pageSize.Value)
                     .Take(pageSize.Value)
                     .AsNoTracking()
                     .ToListAsync();
