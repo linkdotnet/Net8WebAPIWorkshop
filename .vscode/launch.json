@@ -1,0 +1,47 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch (Frontend)",
+        "type": "blazorwasm",
+        "request": "launch",
+        "preLaunchTask": "Build Frontend",
+        "program": "${workspaceFolder}/Frontend/bin/Debug/net8.0/WebApp.dll",
+        "cwd": "${workspaceFolder}/Frontend",
+        "serverReadyAction": {
+          "action": "openExternally",
+          "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+        },
+        "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+      },
+      {
+        "name": "Launch (Backend)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "Build Backend",
+        "program": "${workspaceFolder}/Backend/src/bin/Debug/net8.0/ExpenseTracker.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/Backend",
+        "stopAtEntry": false,
+        "launchSettingsFilePath": "${workspaceFolder}/Backend/src/Properties/launchSettings.json",
+        "launchSettingsProfile": "https",
+        "serverReadyAction": {
+          "action": "openExternally",
+          "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+          "uriFormat": "%s/swagger"
+        },
+        "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+      },
+    ],
+    "compounds": [
+      {
+          "name": "Frontend + Backend",
+          "configurations": ["Launch (Backend)", "Launch (Frontend)"]
+      }
+    ]
+  }
+  
