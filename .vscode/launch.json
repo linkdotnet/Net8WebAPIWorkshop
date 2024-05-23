@@ -3,10 +3,13 @@
     "configurations": [
       {
         "name": "Launch (Frontend)",
-        "type": "blazorwasm",
+        "type": "coreclr",
         "request": "launch",
-        "preLaunchTask": "Build Frontend",
-        "program": "${workspaceFolder}/Frontend/bin/Debug/net8.0/WebApp.dll",
+        "program": "dotnet",
+        "args": [
+          "run",
+          "--launch-profile=https",
+        ],
         "cwd": "${workspaceFolder}/Frontend",
         "serverReadyAction": {
           "action": "openExternally",
@@ -20,13 +23,13 @@
         "name": "Launch (Backend)",
         "type": "coreclr",
         "request": "launch",
-        "preLaunchTask": "Build Backend",
-        "program": "${workspaceFolder}/Backend/src/bin/Debug/net8.0/ExpenseTracker.dll",
-        "args": [],
-        "cwd": "${workspaceFolder}/Backend",
+        "program": "dotnet",
+        "args": [
+          "run",
+          "--launch-profile=https",
+        ],
+        "cwd": "${workspaceFolder}/Backend/src",
         "stopAtEntry": false,
-        "launchSettingsFilePath": "${workspaceFolder}/Backend/src/Properties/launchSettings.json",
-        "launchSettingsProfile": "https",
         "serverReadyAction": {
           "action": "openExternally",
           "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
