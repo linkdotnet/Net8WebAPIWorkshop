@@ -1,0 +1,50 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch (Frontend)",
+        "type": "coreclr",
+        "request": "launch",
+        "program": "dotnet",
+        "args": [
+          "run",
+          "--launch-profile=https",
+        ],
+        "cwd": "${workspaceFolder}/Frontend",
+        "serverReadyAction": {
+          "action": "openExternally",
+          "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+        },
+        "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+      },
+      {
+        "name": "Launch (Backend)",
+        "type": "coreclr",
+        "request": "launch",
+        "program": "dotnet",
+        "args": [
+          "run",
+          "--launch-profile=https",
+        ],
+        "cwd": "${workspaceFolder}/Backend/src",
+        "stopAtEntry": false,
+        "serverReadyAction": {
+          "action": "openExternally",
+          "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+          "uriFormat": "%s/swagger"
+        },
+        "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+      },
+    ],
+    "compounds": [
+      {
+          "name": "Frontend + Backend",
+          "configurations": ["Launch (Backend)", "Launch (Frontend)"]
+      }
+    ]
+  }
+  
